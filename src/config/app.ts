@@ -8,7 +8,6 @@ function makeApp(): oak.Application<Record<string, any>> {
 
   app.use(logger);
   app.use(timing);
-  app.use();
 
   const booksRouter = makeBooksRouter();
 
