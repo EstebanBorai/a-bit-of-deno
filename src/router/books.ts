@@ -1,4 +1,5 @@
 import { oak } from "../../deps.ts";
+import { openConnection } from "../config/database.ts";
 
 const { Router } = oak;
 
@@ -17,17 +18,63 @@ function makeBooksRouter() {
     author: "Conan Doyle, Author",
   });
 
-  router
-    .get("/", (context: RouteContext) => {
-      context.response.body = "Hello world!";
-    })
-    .get("/book", (context: RouteContext) => {
-      context.response.body = Array.from(books.values());
-    })
-    .get("/book/:id", (context: RouteContext) => {
-      if (context.params && context.params.id && books.has(context.params.id)) {
-        context.response.body = books.get(context.params.id);
+  router.get("/book", async (context: RouteContext) => {
+    const conn = await openConnection();
+    const requestBody = await context.request.body();
+    const book = await conn.query(
+      `select * from books`,
+    );
+    console.log(book);
+    context.response.body = {
+      id: book?.id,
+      title: requestBody?.value?.title,
+    };
+
+    conn.close();
+  })
+    .get("/book/:id", async (context: RouteContext) => {
+      if (context.params && context.params.id) {
+        const conn = await openConnection();
+        const requestBody = await context.request.body();
+        const book = await conn.query(
+          `select * from books where id=${context.params.id}`,
+        );
+
+        context.response.body = {
+          id: book?.id,
+          title: requestBody?.value?.title,
+        };
+
+        conn.close();
       }
+    })
+    .post("/book", async (context: RouteContext) => {
+      const conn = await openConnection();
+      const requestBody = await context.request.body();
+
+      const { lastInsertId } = await conn.execute(
+        `INSERT INTO books(title) values(?)`,
+        [
+          requestBody?.value?.title,
+        ],
+      );
+
+      context.response.body = {
+        id: lastInsertId,
+        title: requestBody?.value?.title,
+      };
+
+      conn.close();
+    })
+    .patch("/book/:id", async (context: RouteContext) => {
+      const conn = await openConnection();
+      const requestBody = await context.request.body();
+      await conn.execute(
+        `UPDATE books set ?? = ? WHERE id=${context.params.id}`,
+        ["title", requestBody?.value?.title],
+      );
+
+      await conn.close();
     });
 
   return router;

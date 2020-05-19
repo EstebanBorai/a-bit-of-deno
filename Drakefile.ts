@@ -10,4 +10,9 @@ task("fmt", [], async function () {
   await sh("deno fmt ./src/**");
 });
 
+desc("Creates a .env file interactively");
+task("make-env", [], async function () {
+  await sh("rm ./.env && deno run -A --unstable ./scripts/make-env-file.ts");
+});
+
 run();

@@ -24,4 +24,17 @@ It is also recommended to install [justjavac](https://github.com/justjavac)'s ex
 ```sh
 # runs the server locally
 $ deno run -A Drakefile.ts start
+
+# create a .env file for the project
+$ deno run -A ./Drakefile.ts make-env
+```
+
+### Docker & MySQL
+
+```sh
+# build the docker image
+sudo docker build -t mysql-bit-of-deno ./docker/
+
+# run the docker image
+sudo docker run --env-file ./.env mysql-bit-of-deno
 ```

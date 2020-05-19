@@ -1,8 +1,9 @@
 import { oak } from "../../deps.ts";
-import { logger, timing } from "../middleware/index.ts";
+import { logger, timing } from "../middleware/mod.ts";
+import { bootstrap } from "./database.ts";
 import makeBooksRouter from "../router/books.ts";
 
-function makeApp(): oak.Application<Record<string, any>> {
+async function makeApp(): Promise<oak.Application<Record<string, any>>> {
   const { Application } = oak;
   const app = new Application();
 
@@ -13,6 +14,8 @@ function makeApp(): oak.Application<Record<string, any>> {
 
   app.use(booksRouter.routes());
   app.use(booksRouter.allowedMethods());
+
+  await bootstrap();
 
   return app;
 }
