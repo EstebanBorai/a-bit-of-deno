@@ -11,20 +11,13 @@ type RouteContext = oak.RouterContext<
 function makeBooksRouter() {
   const router = new Router();
 
-  const books = new Map<string, any>();
-  books.set("1", {
-    id: "1",
-    title: "The Hound of the Baskervilles",
-    author: "Conan Doyle, Author",
-  });
-
   router.get("/book", async (context: RouteContext) => {
     const conn = await openConnection();
     const requestBody = await context.request.body();
     const book = await conn.query(
       `select * from books`,
     );
-    console.log(book);
+
     context.response.body = {
       id: book?.id,
       title: requestBody?.value?.title,
