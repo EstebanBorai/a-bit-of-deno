@@ -5,7 +5,7 @@
     width="120"
   />
   <h1>a-bit-of-deno</h1>
-  <span>🦕 A taste on Deno's ecosystem with Oak framework for Web APIs</span>
+  <span>🦕 A try on Deno's ecosystem with Oak framework for Web APIs</span>
 </div>
 
 ## Usage
